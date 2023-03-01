@@ -4,16 +4,25 @@ const {v4: uuidv4} = require('uuid');
 const app = express();
 app.use(express.json());
 
-/*
-cpf = string
-name = string
-id - uuid
-statement []
-*/
 
-//guardar dados
+//amazenamento de  dados
 const customers = [];
 
+//Middleware
+function verifyInfExistsAccountCPF (request, response, next) {
+    const {cpf} = request.headers;
+    
+    const customer = customers.find((customers) => customers.cpf === cpf);
+    
+    if(!customer){
+        return response.status(404).json({error: "customer not found"});
+    }
+    
+    request.customer = customer;
+    
+    return next();
+    
+}
 
 
 app.post ('/account',(request, response) =>{
@@ -35,16 +44,14 @@ app.post ('/account',(request, response) =>{
     return response.status(201).send();
 })
 
-app.get('/statement/:cpf', (request, response) => {
-    const {cpf} = request.params;
+// app.use(verifyInfExistsAccountCPF);
+
+app.get('/statement', verifyInfExistsAccountCPF, (request, response) => {
     
-    const customer = customers.find((customer) => customer.cpf === cpf );
+    const customer = request.customer;
+    console.log(customer);
     
-    if(!customer){
-        return response.status(404).json({error: "customer not found"});
-    }
-    
-    return response.status(200).json(customer.statement);
+    return response.status(200).json(customer);
     
     
 })
