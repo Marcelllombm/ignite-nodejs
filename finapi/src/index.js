@@ -48,11 +48,25 @@ app.post ('/account',(request, response) =>{
 
 app.get('/statement', verifyInfExistsAccountCPF, (request, response) => {
     
-    const customer = request.customer;
-    console.log(customer);
-    
-    return response.status(200).json(customer);
+    const customer = request.customer;    
+    return response.status(200).json(customer.statement);
     
     
+})
+
+app.post('/deposit',verifyInfExistsAccountCPF, (request, response) => {
+    const {description, amount} = request.body;
+    const {customer} = request;
+    
+    const statementOperations = {
+        description,
+        amount,
+        create_at: new Date(),
+        type:"credit"
+    }
+    
+    customer.statement.push(statementOperations);
+    
+    return response.status(201).send();
 })
 app.listen(3333);
