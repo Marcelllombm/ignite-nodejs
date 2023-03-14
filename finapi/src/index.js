@@ -25,7 +25,6 @@ function verifyInfExistsAccountCPF (request, response, next) {
 }
 
 function getBalance(statement){
-    console.log(statement.amount);
     
     const balance = statement.reduce((acc, operation) => {
         if(operation.type === 'credit'){
@@ -72,7 +71,7 @@ app.post('/deposit',verifyInfExistsAccountCPF, (request, response) => {
     const statementOperations = {
         description,
         amount,
-        create_at: new Date(),
+        created_at: new Date(),
         type:"credit"
     }
     
@@ -102,5 +101,56 @@ customer.statement.push(statementOperations);
 return response.status(201).send();
 })
 
+app.get('/statement/date',verifyInfExistsAccountCPF,(request, response) => {
+    const {customer} = request;
+    
+    const {date} = request.query;
+    
+    const dateFormat = new Date(date + " " + " 00:00");
+    
+    const statement = customer.statement.filter( 
+        (statement) =>
+        statement.created_at.toDateString() === 
+        new Date(dateFormat).toDateString()
+        );  
+    
+    
+     const teste = customer.statement;
+     console.log( customer.statement);
+    return response.send('statement');
+})
+
+app.put('/account',verifyInfExistsAccountCPF, (request, response) =>{
+    const {name} = request.body;
+    
+    const {customer} = request;
+    
+    customer.name = name;
+    
+    return response.status(201).send();
+});
+
+app.get('/account',verifyInfExistsAccountCPF,(request, response) => {
+    const {customer} = request;
+    
+    return response.status(200).json(customer); 
+});
+
+app.delete('/account',verifyInfExistsAccountCPF,(request, response) => {
+    const {customer} = request;
+    
+    customers.splice(customer, 1);
+    
+    return response.status(200).json(customer);
+})
+
+app.get('/balance',verifyInfExistsAccountCPF,  (request, response) =>{
+    const {customer} = request;
+    
+    const balance = getBalance(customer.statement)
+    
+    return response.status(200).json(balance);
+    
+    })
 
 app.listen(3333);
