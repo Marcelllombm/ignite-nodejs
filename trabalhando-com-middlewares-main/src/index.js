@@ -10,8 +10,10 @@ app.use(cors());
 const users = [];
 
 function checksExistsUserAccount(request, response, next) {
+
   const {username} = request.headers;
   const user = users.find(user => user.username === username);
+  
   if(!user){
     response.status(404).json({Error: 'Username not found'});
   }
@@ -22,7 +24,14 @@ function checksExistsUserAccount(request, response, next) {
 }
 
 function checksCreateTodosUserAvailability(request, response, next) {
-  // Complete aqui
+const {user} = request;
+
+if(!user.pro && user.todos.legth >= 9) {
+  return response.status(403).json({Error: "You need to have an account:  Pro"})
+}
+
+next();
+
 }
 
 function checksTodoExists(request, response, next) {
