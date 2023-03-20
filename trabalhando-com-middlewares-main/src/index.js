@@ -24,13 +24,15 @@ function checksExistsUserAccount(request, response, next) {
 }
 
 function checksCreateTodosUserAvailability(request, response, next) {
+
 const {user} = request;
 
-if( user.todos.legth === 10 && user.pro === false) {
+if( user.todos.length >= 10 && !user.pro) {
   return response.status(403).json({Error: "User already have 10 todos"})
 }
 
 next();
+
 
 }
 
