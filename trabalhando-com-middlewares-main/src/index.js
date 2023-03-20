@@ -33,7 +33,6 @@ if( user.todos.length >= 10 && !user.pro) {
 
 next();
 
-
 }
 
 function checksTodoExists(request, response, next) {
