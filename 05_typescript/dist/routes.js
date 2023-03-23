@@ -9,7 +9,6 @@ function createCourse(request, response) {
     CreateCourseService_1.default.execute({
         name: "Nodejs",
         educator: "lucas",
-        course: 10
     });
     return response.send();
 }
